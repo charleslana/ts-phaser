@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { configControls, createControls } from './controls';
-import { createPlayer, loadSprites } from './player';
+import { createPlayer, loadSprites, Player } from './player';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
@@ -9,8 +9,10 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
 };
 
 export default class Game extends Phaser.Scene {
-  player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+  player: Player;
   controls: Phaser.Types.Input.Keyboard.CursorKeys;
+  water: Phaser.Tilemaps.TilemapLayer;
+
   constructor() {
     super(sceneConfig);
   }
@@ -27,8 +29,10 @@ export default class Game extends Phaser.Scene {
     const tilesetGrass = map.addTilesetImage('grass', 'tiles');
     const tilesetWater = map.addTilesetImage('water', 'border');
     const ground = map.createLayer('grass', tilesetGrass, 0, 0);
-    const water = map.createLayer('water', tilesetWater, 0, 0);
+    this.water = map.createLayer('water', tilesetWater, 0, 0);
+    this.water.setCollisionByProperty({ collider: true });
     this.player = createPlayer(this);
+    this.physics.add.collider(this.player, this.water);
     this.player.anims.play('player_idle', true);
     this.controls = createControls(this);
   }

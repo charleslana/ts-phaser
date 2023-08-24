@@ -1,3 +1,5 @@
+import { Player } from './player';
+
 export function createControls(
   scene: Phaser.Scene
 ): Phaser.Types.Input.Keyboard.CursorKeys {
@@ -5,7 +7,7 @@ export function createControls(
 }
 
 export function configControls(
-  player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody,
+  player: Player,
   controls: Phaser.Types.Input.Keyboard.CursorKeys,
   _scene: Phaser.Scene
 ): void {
@@ -33,47 +35,43 @@ export function configControls(
   }
 
   if (controls.space.isDown) {
-    attack(player);
+    if (!player.isAttacking) {
+      attack(player);
+    }
     return;
   }
 
-  player.anims.play('player_idle', true);
+  if (!player.isAttacking) {
+    player.anims.play('player_idle', true);
+    return;
+  }
 }
 
 const defaultVelocity = 200;
 
-function moveRight(
-  player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
-): void {
+function moveRight(player: Player): void {
   player.setFlipX(false);
   player.anims.play('player_walk', true);
   player.setVelocityX(defaultVelocity);
 }
 
-function moveLeft(
-  player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
-): void {
+function moveLeft(player: Player): void {
   player.setFlipX(true);
   player.anims.play('player_walk', true);
   player.setVelocityX(-defaultVelocity);
 }
 
-function moveUp(
-  player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
-): void {
+function moveUp(player: Player): void {
   player.anims.play('player_walk', true);
   player.setVelocityY(-defaultVelocity);
 }
 
-function moveDown(
-  player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
-): void {
+function moveDown(player: Player): void {
   player.anims.play('player_walk', true);
   player.setVelocityY(defaultVelocity);
 }
 
-function attack(
-  player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
-): void {
+function attack(player: Player): void {
+  player.isAttacking = true;
   player.anims.play('player_attack', true);
 }

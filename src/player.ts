@@ -1,8 +1,10 @@
-export function createPlayer(
-  scene: Phaser.Scene
-): Phaser.Types.Physics.Arcade.SpriteWithDynamicBody {
+export interface Player extends Phaser.Physics.Arcade.Sprite {
+  isAttacking?: boolean;
+}
+
+export function createPlayer(scene: Phaser.Scene): Player {
   const player = scene.physics.add.sprite(200, 200, 'player_idle');
-  createAnimations(scene);
+  createAnimations(scene, player);
   return player;
 }
 
@@ -24,7 +26,7 @@ export function loadSprites(scene: Phaser.Scene): void {
   });
 }
 
-export function createAnimations(scene: Phaser.Scene): void {
+export function createAnimations(scene: Phaser.Scene, player: Player): void {
   scene.anims.create({
     key: 'player_idle',
     frames: scene.anims.generateFrameNames('player_idle', {
@@ -54,4 +56,13 @@ export function createAnimations(scene: Phaser.Scene): void {
     frameRate: 12,
     repeat: 0,
   });
+  player.on(
+    'animationcomplete',
+    (animation: Phaser.Animations.Animation) => {
+      if (animation.key === 'player_attack') {
+        player.isAttacking = false;
+      }
+    },
+    scene
+  );
 }
