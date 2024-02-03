@@ -1,6 +1,8 @@
 import * as Phaser from 'phaser';
 import { configControls, createControls } from './controls';
-import { createPlayer, loadSprites, Player } from './player';
+import { createPlayer, loadPlayerSprites, Player } from './player';
+import { createSlime, loadSlimeSprites } from './slime';
+import { loadBulletSprites } from './bullet';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
@@ -21,7 +23,9 @@ export default class Game extends Phaser.Scene {
     this.load.image('tiles', './assets/map/grass.png');
     this.load.image('border', './assets/map/water.png');
     this.load.tilemapTiledJSON('map', './assets/map/map.json');
-    loadSprites(this);
+    loadPlayerSprites(this);
+    loadBulletSprites(this);
+    loadSlimeSprites(this);
   }
 
   create() {
@@ -35,6 +39,7 @@ export default class Game extends Phaser.Scene {
     this.physics.add.collider(this.player, this.water);
     this.player.anims.play('player_idle', true);
     this.controls = createControls(this);
+    createSlime(this);
   }
 
   update(_time: number, _delta: number): void {
@@ -43,6 +48,7 @@ export default class Game extends Phaser.Scene {
 }
 
 const config: Phaser.Types.Core.GameConfig = {
+  pixelArt: true,
   type: Phaser.AUTO,
   backgroundColor: '#125555',
   width: 800,

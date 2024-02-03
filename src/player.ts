@@ -4,11 +4,11 @@ export interface Player extends Phaser.Physics.Arcade.Sprite {
 
 export function createPlayer(scene: Phaser.Scene): Player {
   const player = scene.physics.add.sprite(200, 200, 'player_idle');
-  createAnimations(scene, player);
+  createPlayerAnimations(scene, player);
   return player;
 }
 
-export function loadSprites(scene: Phaser.Scene): void {
+export function loadPlayerSprites(scene: Phaser.Scene): void {
   scene.load.spritesheet('player_idle', './assets/player/idle.png', {
     frameWidth: 83,
     frameHeight: 64,
@@ -26,7 +26,7 @@ export function loadSprites(scene: Phaser.Scene): void {
   });
 }
 
-export function createAnimations(scene: Phaser.Scene, player: Player): void {
+export function createPlayerAnimations(scene: Phaser.Scene, player: Player): void {
   scene.anims.create({
     key: 'player_idle',
     frames: scene.anims.generateFrameNames('player_idle', {
@@ -45,7 +45,6 @@ export function createAnimations(scene: Phaser.Scene, player: Player): void {
     }),
     frameRate: 8,
     repeat: -1,
-    yoyo: true,
   });
   scene.anims.create({
     key: 'player_attack',
@@ -61,6 +60,11 @@ export function createAnimations(scene: Phaser.Scene, player: Player): void {
     (animation: Phaser.Animations.Animation) => {
       if (animation.key === 'player_attack') {
         player.isAttacking = false;
+        if (!player.flipX) {
+          player.setOrigin(0.5, 0.5);
+          return;
+        }
+        player.setOrigin(0, 0.5);
       }
     },
     scene
