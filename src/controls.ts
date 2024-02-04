@@ -1,5 +1,6 @@
 import { createBullet } from './bullet';
 import { Player } from './player';
+import { Slime } from './slime';
 
 export function createControls(scene: Phaser.Scene): Phaser.Types.Input.Keyboard.CursorKeys {
   return scene.input.keyboard.createCursorKeys();
@@ -7,6 +8,7 @@ export function createControls(scene: Phaser.Scene): Phaser.Types.Input.Keyboard
 
 export function configControls(
   player: Player,
+  slime: Slime,
   controls: Phaser.Types.Input.Keyboard.CursorKeys,
   scene: Phaser.Scene
 ): void {
@@ -59,7 +61,7 @@ export function configControls(
 
   if (controls.space.isDown) {
     if (!player.isAttacking) {
-      attack(player, scene);
+      attack(player, slime, scene);
     }
     return;
   }
@@ -93,7 +95,7 @@ function moveDown(player: Player): void {
   player.setVelocityY(defaultVelocity);
 }
 
-function attack(player: Player, scene: Phaser.Scene): void {
+function attack(player: Player, slime: Slime, scene: Phaser.Scene): void {
   if (!player.flipX) {
     player.setOrigin(0.3, 0.5);
   } else {
@@ -101,7 +103,10 @@ function attack(player: Player, scene: Phaser.Scene): void {
   }
   player.isAttacking = true;
   player.anims.play('player_attack', true);
-  createBullet(player, scene);
+  const bullet = createBullet(player, scene);
+  scene.physics.add.overlap(bullet, slime, () => {
+    slime.destroy();
+  });
 }
 
 function moveUpRight(player: Player): void {

@@ -1,3 +1,5 @@
+import * as Phaser from 'phaser';
+
 export interface Player extends Phaser.Physics.Arcade.Sprite {
   isAttacking?: boolean;
 }
